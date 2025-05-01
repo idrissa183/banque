@@ -69,6 +69,11 @@ class Settings(BaseSettings):
     EMAIL_USERNAME: str = "ouedraogoidrissa7108@gmail.com"
     EMAIL_PASSWORD: str = "hoqmmawnbybtpzdh"
 
+    # Configuration pour l'API de taux de change
+    EXCHANGE_API_BASE_URL: str = "https://open.er-api.com/v6/latest"
+    EXCHANGE_RATE_CACHE_DURATION: int = 21600
+    CURRENCY_CONVERSION_DEFAULT_FEE: float = 0.025
+
     # Application specific settings
     STUDENT_DEFAULT_CURRENCY: str = "USD"
     BANKING_TRANSFER_FEE_PERCENTAGE: float = 0.5
