@@ -42,6 +42,7 @@ class Settings(BaseSettings):
         "http://localhost:8080",
         "http://localhost:19000",
         "http://localhost:19006",
+        "https://banque-vgx0.onrender.com"
     ]
 
     @field_validator('CORS_ORIGINS')
