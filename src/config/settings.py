@@ -61,10 +61,13 @@ class Settings(BaseSettings):
 
     # SMS and Email configuration for banking notifications
     SMS_API_KEY: str = "your-sms-api-key"
-    EMAIL_HOST: str = "smtp.mailserver.com"
+
+    FRONTEND_URL: str = "http://localhost:3000"
+
+    EMAIL_HOST: str = "smtp.gmail.com"
     EMAIL_PORT: int = 587
-    EMAIL_USERNAME: str = "noreply@yourdomain.com"
-    EMAIL_PASSWORD: str = "your-email-password"
+    EMAIL_USERNAME: str = "ouedraogoidrissa7108@gmail.com"
+    EMAIL_PASSWORD: str = "hoqmmawnbybtpzdh"
 
     # Application specific settings
     STUDENT_DEFAULT_CURRENCY: str = "USD"

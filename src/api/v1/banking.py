@@ -208,7 +208,10 @@ async def create_account(
         account_data: AccountCreate,
         current_user: User = Depends(check_user_role([UserRole.BANKING_USER]))
 ):
+
     """Create a new account for the current user"""
+
+    print(f"Current user roles: {current_user.roles}")
 
     # Check if banking app is enabled for user
     if not current_user.uses_banking_app:

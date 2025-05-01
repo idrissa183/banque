@@ -3,6 +3,7 @@ from beanie import init_beanie
 import logging
 
 from ..config.settings import get_settings
+from ..models.blacklisted_token import BlacklistedToken
 from ..models.user import User
 from ..models.student import Student, Course, Assignment, Grade, Attendance
 from ..models.banking import Account, Transaction, Card, TransferBeneficiary
@@ -34,6 +35,7 @@ async def init_db():
             document_models=[
                 # User models
                 User,
+                BlacklistedToken,
 
                 # Student app models
                 Student,
