@@ -6,7 +6,7 @@ from ..config.settings import get_settings
 from ..models.blacklisted_token import BlacklistedToken
 from ..models.user import User
 from ..models.student import Student, Course, Assignment, Grade, Attendance
-from ..models.banking import Account, Transaction, Card, TransferBeneficiary, ExchangeRate, CurrencyConversion
+from ..models.banking import Account, Transaction, Card, ExchangeRate
 from ..models.clothes import Product, Category, Brand, Review, UserPreference
 
 settings = get_settings()
@@ -49,9 +49,7 @@ async def init_db():
                 Account,
                 Transaction,
                 Card,
-                TransferBeneficiary,
                 ExchangeRate,
-                CurrencyConversion,
 
                 # Clothes app models
                 Product,
@@ -59,7 +57,8 @@ async def init_db():
                 Brand,
                 Review,
                 UserPreference
-            ]
+            ],
+            allow_index_dropping=True
         )
 
         logging.info(f"Connected to MongoDB at {settings.DB_HOST} successfully")
