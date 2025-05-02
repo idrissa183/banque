@@ -7,7 +7,7 @@ from decimal import Decimal, getcontext
 
 import httpx
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Depends, Query, HTTPException, status
+from fastapi import APIRouter, Depends, Query, HTTPException, status, BackgroundTasks
 from pydantic import BaseModel, field_validator
 from src.api.v1.auth import get_current_active_user
 from src.models.user import User
@@ -31,7 +31,6 @@ class TransactionResponse(BaseModel):
     transaction_date: datetime
 
 class DepositRequest(BaseModel):
-    # account_id: str
     amount: float
     description: str = "Deposit"
 
@@ -43,7 +42,6 @@ class DepositRequest(BaseModel):
         return v
 
 class WithdrawalRequest(BaseModel):
-    # account_id: str
     amount: float
     description: str = "Withdrawal"
 
@@ -122,13 +120,18 @@ async def get_exchange_rate(from_currency: Currency, to_currency: Currency) -> D
     if from_currency == to_currency:
         return Decimal(1)
 
-
     rates = await ExchangeRate.find_one({})
     if not rates:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Exchange rates not available"
-        )
+        # Si les taux n'existent pas, essayons de les récupérer d'abord
+        await update_exchange_rates()
+
+        # Réessayons de récupérer les taux
+        rates = await ExchangeRate.find_one({})
+        if not rates:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Exchange rates not available"
+            )
 
     if to_currency.value not in rates.rates:
         raise HTTPException(
@@ -172,9 +175,6 @@ async def get_transactions(
 ):
     """Get transactions for the current user"""
     account = await get_user_account(current_user)
-
-    # Debug: Print account info to verify correct account retrieval
-    print(f"Account ID: {account.id}, Account Number: {account.account_number}")
 
     # Modified query to work with DBRef format
     query = {"account.$id": account.id}
@@ -437,6 +437,7 @@ async def create_transfer(
 @router.post("/currency/convert", response_model=ConversionResponse)
 async def convert_currency(
         conversion_data: ConversionRequest,
+        background_tasks: BackgroundTasks,
         current_user: User = Depends(get_current_active_user)
 ):
     """Convertit un montant d'une devise à une autre"""
@@ -449,6 +450,9 @@ async def convert_currency(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Devise non supportée. Devises disponibles: USD, EUR, XOF"
             )
+
+        # Programmez une mise à jour des taux en arrière-plan
+        background_tasks.add_task(update_exchange_rates)
 
         exchange_rate = await get_exchange_rate(from_currency, to_currency)
 

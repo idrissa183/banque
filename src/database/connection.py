@@ -62,10 +62,10 @@ async def init_db():
         )
 
         logging.info(f"Connected to MongoDB at {settings.DB_HOST} successfully")
-        print(f"Connected to MongoDB at {settings.DB_HOST} successfully")
+        # print(f"Connected to MongoDB at {settings.DB_HOST} successfully")
     except Exception as e:
         logging.error(f"Failed to connect to MongoDB: {e}")
-        print(f"Failed to connect to MongoDB: {e}")
+        # print(f"Failed to connect to MongoDB: {e}")
         raise e
 
 
@@ -82,5 +82,5 @@ async def close_db_connection():
     if client is not None:
         client.close()
         logging.info("MongoDB connection closed")
-        print("MongoDB connection closed")
+        # print("MongoDB connection closed")
         client = None
